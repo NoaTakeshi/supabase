@@ -114,6 +114,9 @@ export function Login() {
         </form>
 
         <div className="auth-card__footer">
+          <p style={{ marginBottom: '0.75rem' }}>
+            <Link to="/forgot-password">¿Olvidaste tu contrasena?</Link>
+          </p>
           <p>
             ¿No tienes cuenta?{' '}
             <Link to="/register">Registrate aqui</Link>
