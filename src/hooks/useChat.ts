@@ -7,6 +7,7 @@ interface Mensaje {
   id: string
   texto: string
   usuario: string
+  email: string
   hora: string 
 }
 
@@ -15,44 +16,39 @@ export function useChat(sala: string) {
   const channelRef = useRef<RealtimeChannel | null>(null)
 
   useEffect(() => {
+    // Limpiar mensajes al cambiar de sala
+    setMensajes([])
+
     // Crear canal con configuracion de self-broadcast
     const channel = supabase.channel(sala, {
       config: {
-        broadcast: { self: true } // Recibir los propios mensajes
+        broadcast: { self: true }
       }
     })
 
     channel
       .on('broadcast', { event: 'mensaje' }, ({ payload }) => {
-        console.log('[v0] Mensaje recibido:', payload)
         setMensajes(prev => [...prev, payload as Mensaje])
       })
-      .subscribe((status) => {
-        console.log('[v0] Estado del canal:', status)
-      })
+      .subscribe()
 
     channelRef.current = channel
 
     return () => { 
-      console.log('[v0] Limpiando canal')
       supabase.removeChannel(channel) 
     }
   }, [sala])
 
-  const enviarMensaje = async (texto: string, usuario: string) => {
-    if (!channelRef.current) {
-      console.log('[v0] Error: Canal no disponible')
-      return
-    }
+  const enviarMensaje = async (texto: string, usuario: string, email: string) => {
+    if (!channelRef.current) return
 
     const mensaje: Mensaje = {
       id: crypto.randomUUID(),
       texto,
       usuario,
-      hora: new Date().toLocaleTimeString()
+      email,
+      hora: new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })
     }
-
-    console.log('[v0] Enviando mensaje:', mensaje)
     
     await channelRef.current.send({ 
       type: 'broadcast', 

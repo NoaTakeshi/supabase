@@ -133,10 +133,10 @@ export function Home() {
               </div>
             ) : (
               tareas.map(tarea => (
-                <TaskItem
-                  key={tarea.id}
-                  tarea={tarea}
-                  onActualizar={(id, completada) => actualizarTarea(id, { completada })}
+<TaskItem
+  key={tarea.id}
+  tarea={tarea}
+  onActualizar={(id, cambios) => actualizarTarea(id, cambios)}
                   onEliminar={eliminarTarea}
                 />
               ))
